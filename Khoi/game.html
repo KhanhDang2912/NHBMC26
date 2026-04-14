@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Mạch Lỗi - Logic Game</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #FFFFFF;
+            --accent-color: #FFD700;
+            --off-color: #333333;
+            --on-color: #00FFCC;
+            --highlight-color: #FF3366;
+            --theory-bg: #1e1e1e;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--text-color);
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            max-width: 75%;
+        }
+
+        .school-logo {
+            width: 80px;
+            height: auto;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white; 
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .rules-box {
+            background-color: #222;
+            border-left: 8px solid var(--accent-color);
+            padding: 15px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            width: 100%;
+            max-width: 570px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            max-width: 600px;
+        }
+
+        select, button {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 18px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+
+        button:hover, select:hover { background-color: var(--accent-color); }
+        
+        .btn-theory {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .stats-board {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 40px;
+            background-color: #222;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 2px solid var(--text-color);
+        }
+
+        #game-board {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            width: 70px;
+            height: 70px;
+            background-color: var(--off-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+
+        .cell.on {
+            background-color: var(--on-color);
+            box-shadow: 0 0 15px var(--on-color);
+        }
+
+        .cell.solution-hint {
+            border: 5px solid var(--highlight-color);
+        }
+
+        #win-message {
+            display: none;
+            font-size: 2rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 10px var(--accent-color);
+            margin-top: 10px;
+            margin-bottom: 20px;
+            animation: blink 1s infinite alternate;
+        }
+
+        /* Khung Hướng dẫn Logic trang trọng */
+        .theory-box {
+            display: none;
+            background-color: var(--theory-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-color);
+            line-height: 1.7;
+            margin-bottom: 40px;
+            box-sizing: border-box;
+        }
+
+        .theory-box h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .theory-box h3 {
+            color: var(--on-color);
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .theory-box p {
+            margin-top: 5px;
+            font-size: 1.05rem;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @media (max-width: 600px) {
+            .cell { width: 55px; height: 55px; }
+            h1 { font-size: 1.5rem; }
+            .school-logo { width: 60px; }
+            .theory-box { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <h1>Bảng Mạch Lỗi</h1>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Logo_of_the_Tr%E1%BA%A7n_%C4%90%E1%BA%A1i_Ngh%C4%A9a_High_School_for_the_Gifted.svg" alt="Logo Trần Đại Nghĩa" class="school-logo">
+    </div>
+
+	<div class="rules-box">
+        <b>Nhiệm vụ:</b> Tắt toàn bộ đèn trên bảng.<br>
+        <b>Cách chơi:</b> Khi nhấn vào một ô, ô đó và các ô liền kề (trên, dưới, trái, phải) sẽ đổi trạng thái (Sáng ↔ Tắt).
+    </div>
+
+    <div class="stats-board">
+        <div>Số thao tác: <span id="moves" style="color: var(--accent-color);">0</span></div>
+        <div>Kỷ lục: <span id="best-score" style="color: var(--on-color);">-</span></div>
+    </div>
+
+    <div id="game-board"></div>
+    <div id="win-message">HỆ THỐNG ĐÃ ĐƯỢC KHẮC PHỤC</div>
+
+    <div class="controls">
+        <select id="size-select">
+            <option value="3">Kích thước: 3x3</option>
+            <option value="4">Kích thước: 4x4</option>
+            <option value="5">Kích thước: 5x5</option>
+        </select>
+        <button id="btn-new">Khởi tạo lại</button>
+        <button id="btn-hint" style="background-color: var(--highlight-color); color: white;">Xem lời giải</button>
+        <button id="btn-theory" class="btn-theory">Hướng dẫn Logic</button>
+    </div>
+
+    <div class="theory-box" id="theory-box">
+        <h2>Cách Tìm Lời Giải (Chiến thuật "Đuổi Đèn")</h2>
+        <p>Thay vì bấm ngẫu nhiên, bạn có thể giải quyết hệ thống này bằng phương pháp <b>Đuổi Đèn</b>:</p>
+        
+        <h3>Bước 1: Tắt đèn từ trên xuống dưới</h3>
+        <p>Bắt đầu từ <b>hàng thứ 2</b> (từ trên đếm xuống). Nhìn lên hàng ngay phía trên nó, nếu thấy có ô nào đang <b>SÁNG</b>, bạn hãy nhấn vào <b>ô ngay bên dưới</b> nó ở hàng hiện tại để dập tắt ô sáng đó.</p>
+        <p>Làm tương tự cho đến khi chạm đáy bảng. Lúc này, tất cả các hàng trên đều đã tắt bóng, chỉ còn sót lại một vài đèn ở <b>hàng cuối cùng</b>.</p>
+
+        <h3>Bước 2: "Sửa lỗi" từ hàng đầu tiên</h3>
+        <p>Dựa vào các đèn còn sáng ở hàng cuối cùng, bạn hãy quay lại <b>hàng trên cùng (hàng 1)</b> và bấm theo bảng quy tắc chuẩn sau đây (dành cho bảng 3x3):</p>
+        
+        <table style="width:100%; text-align:left; border-collapse: collapse; margin-bottom: 15px; background: rgba(255,255,255,0.05);">
+            <tr style="border-bottom: 2px solid #aaa;">
+                <th style="padding: 8px;">Đèn sáng ở hàng cuối</th>
+                <th style="padding: 8px;">Vị trí cần bấm ở hàng 1</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Trái</b></td><td style="padding: 8px;">Trái & Giữa</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Giữa</b></td><td style="padding: 8px;">Trái, Giữa & Phải (Cả 3 ô)</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Phải</b></td><td style="padding: 8px;">Giữa & Phải</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Trái</b> và <b>Giữa</b></td><td style="padding: 8px;">Phải</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Giữa</b> và <b>Phải</b></td><td style="padding: 8px;">Trái</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Trái</b> và <b>Phải</b></td><td style="padding: 8px;">Trái & Phải</td></tr>
+            <tr><td style="padding: 8px;">Sáng cả <b>3 đèn</b></td><td style="padding: 8px;">Giữa</td></tr>
+        </table>
+
+        <h3>Bước 3: Đuổi đèn lần cuối</h3>
+        <p>Sau khi bấm xong ở hàng 1 theo bảng trên, bạn lặp lại <b>Bước 1</b> (tắt đèn từ trên xuống dưới) một lần nữa. Lần này khi đi đến hàng cuối cùng, toàn bộ bảng mạch sẽ hoàn toàn TẮT và bạn đã chiến thắng!</p>
+
+        <hr style="border-color: #555; margin: 20px 0;">
+        <p><i>💡 <b>Sử dụng nút "Xem lời giải":</b> Nút này sử dụng thuật toán để tính toán sẵn tất cả các bước cẩn thiết và đóng khung đỏ. Bạn chỉ cần bấm đúng 1 lần vào các ô có khung đỏ là hoàn thành!</i></p>
+    </div>
+
+    <script>
+        const boardEl = document.getElementById('game-board');
+        const sizeSelect = document.getElementById('size-select');
+        const movesEl = document.getElementById('moves');
+        const bestScoreEl = document.getElementById('best-score');
+        const btnNew = document.getElementById('btn-new');
+        const btnHint = document.getElementById('btn-hint');
+        const btnTheory = document.getElementById('btn-theory');
+        const winMessage = document.getElementById('win-message');
+        const theoryBox = document.getElementById('theory-box');
+
+        let size = 3;
+        let board = [];
+        let solution = []; 
+        let moves = 0;
+        let bestScores = { 3: null, 4: null, 5: null };
+        let isGameOver = false;
+        let showingHint = false;
+
+        function initGame() {
+            size = parseInt(sizeSelect.value);
+            boardEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            board = Array(size).fill(0).map(() => Array(size).fill(false));
+            solution = Array(size).fill(0).map(() => Array(size).fill(false));
+            moves = 0;
+            isGameOver = false;
+            showingHint = false;
+            winMessage.style.display = 'none';
+            updateStats();
+
+            let clicksNeeded = size * 3; 
+            for(let i=0; i<clicksNeeded; i++) {
+                let r = Math.floor(Math.random() * size);
+                let c = Math.floor(Math.random() * size);
+                toggleCellLogic(r, c);
+                solution[r][c] = !solution[r][c]; 
+            }
+
+            if(checkWinCondition()) initGame(); 
+            else renderBoard();
+        }
+
+        function toggleCellLogic(r, c) {
+            const directions = [[0,0], [-1,0], [1,0], [0,-1], [0,1]];
+            directions.forEach(([dr, dc]) => {
+                let nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+                    board[nr][nc] = !board[nr][nc];
+                }
+            });
+        }
+
+        function handleCellClick(r, c) {
+            if (isGameOver) return;
+            toggleCellLogic(r, c);
+            moves++;
+            solution[r][c] = !solution[r][c]; 
+
+            renderBoard();
+            updateStats();
+
+            if (checkWinCondition()) {
+                isGameOver = true;
+                winMessage.style.display = 'block';
+                if (bestScores[size] === null || moves < bestScores[size]) {
+                    bestScores[size] = moves;
+                }
+                updateStats();
+                showingHint = false;
+                renderBoard();
+            }
+        }
+
+        function checkWinCondition() {
+            return board.every(row => row.every(cell => !cell));
+        }
+
+        function renderBoard() {
+            boardEl.innerHTML = '';
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const cellEl = document.createElement('div');
+                    cellEl.className = `cell ${board[r][c] ? 'on' : ''}`;
+                    
+                    if (showingHint && solution[r][c] && !isGameOver) {
+                        cellEl.classList.add('solution-hint');
+                    }
+
+                    cellEl.addEventListener('click', () => handleCellClick(r, c));
+                    boardEl.appendChild(cellEl);
+                }
+            }
+        }
+
+        function updateStats() {
+            movesEl.innerText = moves;
+            bestScoreEl.innerText = bestScores[size] === null ? "-" : bestScores[size];
+        }
+
+        btnNew.addEventListener('click', initGame);
+        sizeSelect.addEventListener('change', initGame);
+        
+        btnHint.addEventListener('click', () => {
+            if(isGameOver) return;
+            showingHint = !showingHint;
+            renderBoard();
+        });
+
+        btnTheory.addEventListener('click', () => {
+            if (theoryBox.style.display === 'block') {
+                theoryBox.style.display = 'none';
+            } else {
+                theoryBox.style.display = 'block';
+                theoryBox.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        initGame();
+    </script>
+</body>
+</html>
