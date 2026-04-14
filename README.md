@@ -14,5 +14,6 @@ Bấm vào đây nếu chưa thấy website live cập nhật sau 1 phút
 - **Math farm**: Dương
 - **Toán tốc chiến**: Cường
 - **Bảng mạch lỗi**: Khôi
+- **Graph Racer**: Hoàng
 
 Ai đổi tên hoặc đổi game thì nhắn hoặc tự commit file README.MD nha
