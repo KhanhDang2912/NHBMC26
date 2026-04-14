@@ -204,8 +204,9 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Logo_of_the_Tr%E1%BA%A7n_%C4%90%E1%BA%A1i_Ngh%C4%A9a_High_School_for_the_Gifted.svg" alt="Logo Trần Đại Nghĩa" class="school-logo">
     </div>
 
-    <div class="rules-box">
-        YÊU CẦU HỆ THỐNG: Nhấn vào 1 vị trí để đảo trạng thái (SÁNG/TẮT) của chính vị trí đó và tối đa 4 ô kề cạnh (trên, dưới, trái, phải). Hãy đưa toàn bộ hệ thống về trạng thái TẮT để hoàn thành.
+	<div class="rules-box">
+        <b>Nhiệm vụ:</b> Tắt toàn bộ đèn trên bảng.<br>
+        <b>Cách chơi:</b> Khi nhấn vào một ô, ô đó và các ô liền kề (trên, dưới, trái, phải) sẽ đổi trạng thái (Sáng ↔ Tắt).
     </div>
 
     <div class="stats-board">
@@ -228,17 +229,35 @@
     </div>
 
     <div class="theory-box" id="theory-box">
-        <h2>Nguyên Lý Hoạt Động</h2>
-        <p>Để tối ưu hóa số thao tác trong hệ thống này, người dùng cần nắm vững hai nguyên tắc logic cơ bản yếu thay vì thử nghiệm ngẫu nhiên:</p>
+        <h2>Cách Tìm Lời Giải (Chiến thuật "Đuổi Đèn")</h2>
+        <p>Thay vì bấm ngẫu nhiên, bạn có thể giải quyết hệ thống này bằng phương pháp <b>Đuổi Đèn</b>:</p>
         
-        <h3>1. Nguyên tắc trạng thái nhị phân</h3>
-        <p>Hệ thống đèn hoạt động dựa trên cơ chế nhị phân (chỉ có hai trạng thái). Việc tác động vào cùng một vị trí hai lần liên tiếp sẽ triệt tiêu lẫn nhau, đưa trạng thái về lại ban đầu. Do đó, trong một chuỗi thao tác tối ưu, mỗi vị trí trên bảng mạch chỉ cần được tác động <b>tối đa một lần</b>.</p>
+        <h3>Bước 1: Tắt đèn từ trên xuống dưới</h3>
+        <p>Bắt đầu từ <b>hàng thứ 2</b> (từ trên đếm xuống). Nhìn lên hàng ngay phía trên nó, nếu thấy có ô nào đang <b>SÁNG</b>, bạn hãy nhấn vào <b>ô ngay bên dưới</b> nó ở hàng hiện tại để dập tắt ô sáng đó.</p>
+        <p>Làm tương tự cho đến khi chạm đáy bảng. Lúc này, tất cả các hàng trên đều đã tắt bóng, chỉ còn sót lại một vài đèn ở <b>hàng cuối cùng</b>.</p>
 
-        <h3>2. Tính độc lập của trình tự thao tác (Tính giao hoán)</h3>
-        <p>Trạng thái cuối cùng của toàn bộ lưới chỉ phụ thuộc vào tập hợp các vị trí đã được tác động, hoàn toàn <b>không phụ thuộc vào thứ tự thực hiện</b> thao tác đó trước hay sau.</p>
+        <h3>Bước 2: "Sửa lỗi" từ hàng đầu tiên</h3>
+        <p>Dựa vào các đèn còn sáng ở hàng cuối cùng, bạn hãy quay lại <b>hàng trên cùng (hàng 1)</b> và bấm theo bảng quy tắc chuẩn sau đây (dành cho bảng 3x3):</p>
+        
+        <table style="width:100%; text-align:left; border-collapse: collapse; margin-bottom: 15px; background: rgba(255,255,255,0.05);">
+            <tr style="border-bottom: 2px solid #aaa;">
+                <th style="padding: 8px;">Đèn sáng ở hàng cuối</th>
+                <th style="padding: 8px;">Vị trí cần bấm ở hàng 1</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Trái</b></td><td style="padding: 8px;">Trái & Giữa</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Giữa</b></td><td style="padding: 8px;">Trái, Giữa & Phải (Cả 3 ô)</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;">Chỉ đèn <b>Phải</b></td><td style="padding: 8px;">Giữa & Phải</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Trái</b> và <b>Giữa</b></td><td style="padding: 8px;">Phải</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Giữa</b> và <b>Phải</b></td><td style="padding: 8px;">Trái</td></tr>
+            <tr style="border-bottom: 1px solid #555;"><td style="padding: 8px;"><b>Trái</b> và <b>Phải</b></td><td style="padding: 8px;">Trái & Phải</td></tr>
+            <tr><td style="padding: 8px;">Sáng cả <b>3 đèn</b></td><td style="padding: 8px;">Giữa</td></tr>
+        </table>
 
-        <h3>Phương pháp giải quyết</h3>
-        <p>Từ hai nguyên lý trên, bài toán được thu gọn lại thành việc: Xác định chính xác tập hợp các vị trí cần thao tác. Chức năng "Xem lời giải" của hệ thống thực chất là một thuật toán đánh giá tính chẵn lẻ để trích xuất trực tiếp tập hợp các vị trí này (được đánh dấu viền đỏ). Khi đã xác định được tập hợp, người dùng chỉ cần thực hiện thao tác trên các vị trí đó theo bất kỳ thứ tự nào để hoàn thành yêu cầu.</p>
+        <h3>Bước 3: Đuổi đèn lần cuối</h3>
+        <p>Sau khi bấm xong ở hàng 1 theo bảng trên, bạn lặp lại <b>Bước 1</b> (tắt đèn từ trên xuống dưới) một lần nữa. Lần này khi đi đến hàng cuối cùng, toàn bộ bảng mạch sẽ hoàn toàn TẮT và bạn đã chiến thắng!</p>
+
+        <hr style="border-color: #555; margin: 20px 0;">
+        <p><i>💡 <b>Sử dụng nút "Xem lời giải":</b> Nút này sử dụng thuật toán để tính toán sẵn tất cả các bước cẩn thiết và đóng khung đỏ. Bạn chỉ cần bấm đúng 1 lần vào các ô có khung đỏ là hoàn thành!</i></p>
     </div>
 
     <script>
