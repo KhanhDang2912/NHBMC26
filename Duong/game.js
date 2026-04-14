@@ -1,4 +1,4 @@
-let ga, vit, clicks, targetX, targetY, score = 0;
+let ga, vit, clicks, targetX, targetY, score = 0, mistakes = 0;
 let audioCtx;
 
 function initAudio() {
@@ -41,28 +41,45 @@ window.startGame = function() {
 
 window.restartGame = function() {
     score = 0;
+    mistakes = 0; // Reset lại số lần sai
     clicks = Math.floor(Math.random() * 3) + 3;
     generateProblem();
+    
+    // Đặt lại các màn hình
     document.getElementById('phase2').classList.add('hidden');
     document.getElementById('final-stats').classList.add('hidden');
+    document.getElementById('phase1-gameover').classList.add('hidden');
     document.getElementById('phase1').classList.remove('hidden');
+    
     document.getElementById('p1-feedback').innerText = '';
     document.getElementById('inputX').value = '';
     document.getElementById('inputY').value = '';
+    document.getElementById('game-log').innerText = "Nhìn kỹ tỷ lệ và mổ ngay nào! 🔪";
     refreshPermanentHighScore();
 };
 
 window.checkPhase1 = function() {
     const x = parseInt(document.getElementById('inputX').value);
     const y = parseInt(document.getElementById('inputY').value);
+    
     if (x === targetX && y === targetY) {
         sounds.success();
         document.getElementById('phase1').classList.add('hidden');
         document.getElementById('phase2').classList.remove('hidden');
         updateUI();
     } else {
+        mistakes++;
         sounds.fail();
-        document.getElementById('p1-feedback').innerText = "❌ Tính toán lại chút nào!";
+        
+        // Kiểm tra xem đã sai quá 1 lần chưa (lần 2 là thua luôn)
+        if (mistakes >= 2) {
+            document.getElementById('phase1').classList.add('hidden');
+            document.getElementById('phase1-gameover').classList.remove('hidden');
+        } else {
+            // Cảnh báo khi sai lần đầu
+            document.getElementById('p1-feedback').innerHTML = 
+                "<span style='color: #c0392b; font-weight: bold;'>❌ Sai rồi! Bạn chỉ được sai 1 lần duy nhất nữa thôi!</span>";
+        }
     }
 };
 
@@ -73,10 +90,10 @@ window.slaughter = function(type) {
 
     if (Math.random() < (t.quality / t.total)) {
         score++; t.quality--; sounds.success();
-        document.getElementById('game-log').innerText = "✨ Trúng con CHẤT LƯỢNG! 💎";
+        document.getElementById('game-log').innerText = "✨ Đỉnh cao! Trúng ngay con CHẤT LƯỢNG! 💎";
     } else {
         sounds.click();
-        document.getElementById('game-log').innerText = "🍃 Thường thôi...";
+        document.getElementById('game-log').innerText = "🍃 Ôi không, con này hơi gầy...";
     }
     t.total--; clicks--; updateUI();
 };
@@ -85,12 +102,16 @@ function generateProblem() {
     targetX = Math.floor(Math.random() * 10) + 5;
     targetY = Math.floor(Math.random() * 10) + 5;
     const weights = [1.5, 2, 2.5, 3];
-    let a = weights[Math.floor(Math.random() * 2)];
-    let b = weights[Math.floor(Math.random() * 2) + 2];
+    
+    let a = weights[Math.floor(Math.random() * 2)]; // Cân nặng Gà
+    let b = weights[Math.floor(Math.random() * 2) + 2]; // Cân nặng Vịt
     let totalW = (targetX * a) + (targetY * b);
 
+    // Xuất đề bài dạng văn xuôi
     document.getElementById('problem-desc').innerHTML = 
-        `Tổng <b>${targetX + targetY}</b> con. Nặng <b>${totalW.toFixed(1)}kg</b>.<br>Gà <b>${a}kg</b>, Vịt <b>${b}kg</b>.`;
+        `Có <b>${targetX + targetY}</b> con vừa gà vừa vịt, có cân nặng tổng cộng là <b>${totalW.toFixed(1)}kg</b>.<br><br>` +
+        `Biết rằng, mỗi con gà nặng <b>${a}kg</b>, mỗi con vịt nặng <b>${b}kg</b>.<br>` +
+        `Hỏi có bao nhiêu con gà, bao nhiêu con vịt?`;
     
     ga = { quality: Math.floor(targetX * (Math.random() * 0.4 + 0.3)), total: targetX };
     vit = { quality: Math.floor(targetY * (Math.random() * 0.4 + 0.3)), total: targetY };
@@ -111,13 +132,26 @@ function updateUI() {
         document.getElementById('final-stats').classList.remove('hidden');
         document.getElementById('final-score').innerText = score;
         document.getElementById('high-score').innerText = currentHigh;
-        document.getElementById('rank-text').innerText = score >= 4 ? "🌟 Siêu cấp chủ trại!" : "🤠 Cố gắng nhé!";
+        document.getElementById('rank-text').innerText = score >= 4 ? "🌟 Nông dân đại tài!" : "🤠 Cố gắng luyện tập thêm nhé!";
         refreshPermanentHighScore();
+        
+        // Ẩn nút mổ để kết thúc
+        document.getElementById('action-buttons').classList.add('hidden');
+    } else {
+        document.getElementById('action-buttons').classList.remove('hidden');
     }
 }
 
+function renderMath() {
+    if (window.MathJax && window.MathJax.typeset) {
+        window.MathJax.typeset();
+    }
+}
+
+// Gọi renderMath() trong window.onload hoặc sau khi mở UI mới
 window.onload = () => { 
     generateProblem(); 
     clicks = 5; 
     refreshPermanentHighScore(); 
+    renderMath(); // Vẽ lại công thức khi load trang
 };
