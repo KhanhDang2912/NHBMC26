@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Racer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="ui-layer">
+        <header>
+            <div class="logo">GraphRacer</div>
+            <div class="stats">
+                <span class="timer">Time: <span id="time">01:30</span></span>
+                <span class="score-board">Score: <span id="score">0</span></span>
+            </div>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="start-overlay" class="overlay">
+            <h1>Graph Racer</h1>
+            <p>Connect the points using mathematical functions! (e.g. x^2 - 2)</p>
+            <button id="start-btn" class="l-btn">START GAME</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-overlay" class="overlay hidden">
+            <h1>Time's Up!</h1>
+            <p>Final Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="l-btn">PLAY AGAIN</button>
+        </div>
+        <main>
+            <div class="task-panel glass">
+                <h2 id="task-title">Mission</h2>
+                <p id="task-desc">Loading...</p>
+                <div class="points-display" id="points-display">
+                    <!-- Points injected here -->
+                </div>
+            </div>
+            
+            <div class="input-panel glass">
+                <div class="input-group">
+                    <span class="function-label">f(x) = </span>
+                    <input type="text" id="formula-input" placeholder="e.g. x^2 - 2*x + 1" autocomplete="off">
+                    <button id="run-btn">Launch!</button>
+                </div>
+                <div id="message" class="message"></div>
+            </div>
+        </main>
+    </div>
+    <canvas id="graph-canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
